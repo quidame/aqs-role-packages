@@ -1,0 +1,25 @@
+---
+# role: packages
+# file: defaults/main.yml
+#
+# This file should declare all or almost all variables of the role, describe
+# them, provide examples and a safe default value for each.  A variable that
+# is defined here may be overridden anywhere else, this place having the lowest
+# precedence/priority/weight.
+#
+# All variables of this role should have a name of the form:
+# packages__foo
+# with two underscores between the role name (that is a prefix) and `foo`, i.e.
+# what this variable is supposed to be for, as in:
+# packages__login: admin
+# packages__base_url: https://packages.qssdk.lab
+
+################################################################################
+## packages__action
+#
+# Define the main behaviour of the role. Valid values are 'setup' (the default)
+# and 'unset'.  Depending of the role scope, this may be understood as install/
+# uninstall, configure/unconfigure, start/stop, present/absent, create/remove,
+# and so on.
+#
+#packages__action: setup

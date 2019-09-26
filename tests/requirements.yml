@@ -1,0 +1,7 @@
+# role: packages
+# file: tests/requirements.yml
+---
+- name: "packages"
+  src: "https://github.com/quidame/aqs-role-packages.git"
+  scm: "git"
+  version: "devel"
