@@ -23,3 +23,26 @@
 # and so on.
 #
 #packages__action: setup
+
+
+################################################################################
+## packages__*
+#
+# Variables matching parameters of the apt module.
+#
+#packages__name: []
+#packages__allow_unauthenticated: omit
+#packages__autoclean:             omit
+#packages__autoremove:            omit
+#packages__cache_valid_time:      omit
+#packages__deb:                   omit
+#packages__default_release:       omit
+#packages__dpkg_options:          omit
+#packages__force:                 omit
+#packages__force_apt_get:         omit
+#packages__install_recommends:    omit
+#packages__only_upgrade:          omit
+#packages__policy_rc_d:           omit
+#packages__purge:                 omit
+#packages__update_cache:          omit
+#packages__upgrade:               omit

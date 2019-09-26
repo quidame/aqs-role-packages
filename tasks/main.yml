@@ -3,5 +3,3 @@
 # file: tasks/main.yml
 
 - include_tasks: "{{ packages__action | default('setup') }}.yml"
-  tags:
-    - "aqs::packages"

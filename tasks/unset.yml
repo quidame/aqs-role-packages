@@ -5,5 +5,12 @@
 # Tasks to unset packages.
 # Each task should be clearly named, with no inventory variable in the name.
 
-- name: fail unconditionally
-  fail:
+- name: uninstall packages
+  apt:
+    name: "{{ packages__name }}"
+    state: absent
+    autoremove:    "{{ packages__autoremove    | default(omit) }}"
+    dpkg_options:  "{{ packages__dpkg_options  | default(omit) }}"
+    force:         "{{ packages__force         | default(omit) }}"
+    force_apt_get: "{{ packages__force_apt_get | default(omit) }}"
+    purge:         "{{ packages__purge         | default(omit) }}"

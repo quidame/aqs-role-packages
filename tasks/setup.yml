@@ -5,5 +5,21 @@
 # Tasks to setup packages.
 # Each task should be clearly named, with no inventory variable in the name.
 
-- name: fail unconditionally
-  fail:
+- name: install packages
+  apt:
+    name: "{{ packages__name }}"
+    state: "{{ 'latest' if packages__state == 'latest' else 'present' }}"
+    allow_unauthenticated: "{{ packages__allow_unauthenticated | default(omit) }}"
+    autoclean:             "{{ packages__autoclean             | default(omit) }}"
+    autoremove:            "{{ packages__autoremove            | default(omit) }}"
+    cache_valid_time:      "{{ packages__cache_valid_time      | default(omit) }}"
+    deb:                   "{{ packages__deb                   | default(omit) }}"
+    default_release:       "{{ packages__default_release       | default(omit) }}"
+    dpkg_options:          "{{ packages__dpkg_options          | default(omit) }}"
+    force:                 "{{ packages__force                 | default(omit) }}"
+    force_apt_get:         "{{ packages__force_apt_get         | default(omit) }}"
+    install_recommends:    "{{ packages__install_recommends    | default(omit) }}"
+    only_upgrade:          "{{ packages__only_upgrade          | default(omit) }}"
+    policy_rc_d:           "{{ packages__policy_rc_d           | default(omit) }}"
+    update_cache:          "{{ packages__update_cache          | default(omit) }}"
+    upgrade:               "{{ packages__upgrade               | default(omit) }}"
