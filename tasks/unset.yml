@@ -7,7 +7,7 @@
 
 - name: uninstall packages
   apt:
-    name: "{{ packages__name }}"
+    name: "{{ packages__list | json_query('[*].name') }}"
     state: absent
     autoremove:    "{{ packages__autoremove    | default(omit) }}"
     dpkg_options:  "{{ packages__dpkg_options  | default(omit) }}"

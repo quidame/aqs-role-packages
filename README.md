@@ -1,13 +1,15 @@
 # packages
 
-Ansible role to install or uninstall debian packages.
+Ansible role to install or uninstall debian packages. Packages may also be
+configured with debconf before installing them, and alternatives can be set
+too right after.
 
 This role is a piece of (*yet another*)
 [Ansible Quick Starter](/aqs-common) (**AQS**).
 
 ## Requirements
 
-None.
+Needs jmespath python package installed on the ansible controller.
 
 ## Role Variables
 
@@ -15,6 +17,43 @@ The main action the role is called for. Choices are `setup` (the default) and
 `unset`.
 ```yaml
 packages__action: unset
+```
+
+A complex object that lists the packages to install, their debconf answers and
+alternatives to configure.
+```yaml
+packages__list:
+  - name: vim
+    alternatives:
+      - name: editor
+        path: /usr/bin/vim.basic
+  - name: apparmor
+    debconf:
+      - name: grub-pc
+        question: grub2/linux_cmdline
+	value: security=apparmor apparmor=1
+	vtype: string
+```
+If `debconf.name` is not provided, the package name is used instead.
+
+Options to pass to the `apt` module when installing or uninstalling packages.
+All are unset by default, meaning that the default value of the matching module
+parameter is applied.
+```yaml
+packages__allow_unauthenticated: null
+packages__autoclean:             null
+packages__autoremove:            null
+packages__cache_valid_time:      null
+packages__default_release:       null
+packages__dpkg_options:          null
+packages__force:                 null
+packages__force_apt_get:         null
+packages__install_recommends:    null
+packages__only_upgrade:          null
+packages__policy_rc_d:           null
+packages__purge:                 null
+packages__update_cache:          null
+packages__upgrade:               null
 ```
 
 ## Dependencies
@@ -40,26 +79,52 @@ ansible-galaxy install -r requirements.yml
 
 ## Example Playbook
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-Install packages:
+Configure packages with debconf if wanted, then install all named packages and
+update alternatives if wanted.
 ```yaml
-- hosts: all
+- hosts: clients
   roles:
     - role: packages
-      packages__name: ["vim", "screen", "mc"]
       packages__update_cache; yes
       packages__state: latest
+      packages__list:
+        - name: apparmor
+          debconf:
+            - name: grub-pc
+              question: grub2/linux_cmdline
+              value: "security=apparmor apparmor=1"
+              vtype: string
+        - name: mc
+        - name: keyboard-configuration
+          debconf:
+            - question: keyboard-configuration/modelcode
+              value: "pc105"
+              vtype: string
+            - question: keyboard-configuration/layoutcode
+              value: "fr,us"
+              vtype: string
+            - question: keyboard-configuration/variantcode
+              value: "latin9,intl"
+              vtype: string
+            - question: keyboard-configuration/optionscode
+              value: "grp:lctrl_lshift_toggle,terminate:ctrl_alt_bksp,grp_led:scroll"
+              vtype: string
+        - name: screen
+        - name: vim
+          alternatives:
+            - name: editor
+              path: /usr/bin/vim.basic
 ```
 
 Uninstall packages:
 ```yaml
-- hosts: servers
+- hosts: clients
   roles:
     - role: packages
       packages__action: unset
-      packages__name: etckeeper
       packages__purge: yes
+      packages__list:
+        - name: etckeeper
 ```
 
 ## License

@@ -26,16 +26,44 @@
 
 
 ################################################################################
+## packages__list
+#
+# List of dictionnaries of packages to install after optionally configuring them
+# with debconf and before optionally setting alternatives. Example:
+#
+# packages__list:
+#   - name: locales
+#     debconf:
+#       - question: locales/default_environment_locale
+#         value: fr_FR.UTF-8
+#         vtype: select
+#       - question: locales/locales_to_be_generated
+#         value: fr_FR.UTF-8, en_US.UTF-8
+#         vtype: multiselect
+#   - name: apparmor
+#     debconf:
+#       - name: grub-pc
+#         question: grub2/linux_cmdline
+#         value: security=apparmor apparmor=1
+#         vtype: bool
+#   - name: screen
+#   - name: vim
+#     alternatives:
+#       - name: editor
+#         path: /usr/bin/vim.basic
+#
+package__list: []
+
+
+################################################################################
 ## packages__*
 #
 # Variables matching parameters of the apt module.
 #
-#packages__name: []
 #packages__allow_unauthenticated: omit
 #packages__autoclean:             omit
 #packages__autoremove:            omit
 #packages__cache_valid_time:      omit
-#packages__deb:                   omit
 #packages__default_release:       omit
 #packages__dpkg_options:          omit
 #packages__force:                 omit

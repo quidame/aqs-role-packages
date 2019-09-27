@@ -5,15 +5,28 @@
 # Tasks to setup packages.
 # Each task should be clearly named, with no inventory variable in the name.
 
+- name: configure packages
+  debconf:
+    name:     "{{ pkg.name }}"
+    question: "{{ pkg.question }}"
+    value:    "{{ pkg.value }}"
+    vtype:    "{{ pkg.vtype }}"
+  loop: |
+    [ {% for p in packages__list if p.debconf is defined %}{% for d in p.debconf %}
+      {% if d.name is defined %}{{ d }}{% else %}{{ d | combine({"name": p.name}) }}{% endif %}
+      {{ '' if loop.last else ',' }}{% endfor %}{{ '' if loop.last else ',' }}{% endfor %} ]
+  loop_control:
+    loop_var: pkg
+
+
 - name: install packages
   apt:
-    name: "{{ packages__name }}"
+    name: "{{ packages__list | json_query('[*].name') }}"
     state: "{{ 'latest' if packages__state == 'latest' else 'present' }}"
     allow_unauthenticated: "{{ packages__allow_unauthenticated | default(omit) }}"
     autoclean:             "{{ packages__autoclean             | default(omit) }}"
     autoremove:            "{{ packages__autoremove            | default(omit) }}"
     cache_valid_time:      "{{ packages__cache_valid_time      | default(omit) }}"
-    deb:                   "{{ packages__deb                   | default(omit) }}"
     default_release:       "{{ packages__default_release       | default(omit) }}"
     dpkg_options:          "{{ packages__dpkg_options          | default(omit) }}"
     force:                 "{{ packages__force                 | default(omit) }}"
@@ -23,3 +36,14 @@
     policy_rc_d:           "{{ packages__policy_rc_d           | default(omit) }}"
     update_cache:          "{{ packages__update_cache          | default(omit) }}"
     upgrade:               "{{ packages__upgrade               | default(omit) }}"
+
+
+- name: configure alternatives
+  alternatives:
+    name:     "{{ alt.name }}"
+    path:     "{{ alt.path }}"
+    link:     "{{ alt.link | default(omit) }}"
+    priority: "{{ alt.prio | default(omit) }}"
+  loop: "{{ packages__list | json_query('[*].alternatives') | flatten }}"
+  loop_control:
+    loop_var: alt
