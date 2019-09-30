@@ -6,11 +6,3 @@
 # i.e. when other roles have been played too.  Notified handlers may be played
 # anytime with:
 # - meta: flush_handlers.
-#
-#- name: restart packages service
-#  systemd:
-#    name: packages
-#    daemon_reload: yes
-#    enabled: yes
-#    state: restarted
-#  listen: packages__restart

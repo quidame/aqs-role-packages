@@ -29,28 +29,29 @@
 ## packages__list
 #
 # List of dictionnaries of packages to install after optionally configuring them
-# with debconf and before optionally setting alternatives. Example:
+# with debconf and before optionally configuring them with dpkg-reconfigure.
+# Example:
 #
-# packages__list:
-#   - name: locales
-#     debconf:
-#       - question: locales/default_environment_locale
-#         value: fr_FR.UTF-8
-#         vtype: select
-#       - question: locales/locales_to_be_generated
-#         value: fr_FR.UTF-8, en_US.UTF-8
-#         vtype: multiselect
-#   - name: apparmor
-#     debconf:
-#       - name: grub-pc
-#         question: grub2/linux_cmdline
-#         value: security=apparmor apparmor=1
-#         vtype: bool
-#   - name: screen
-#   - name: vim
-#     alternatives:
-#       - name: editor
-#         path: /usr/bin/vim.basic
+#packages__list:
+#  - name: locales
+#    debconf:
+#      - question: locales/default_environment_locale
+#        value: fr_FR.UTF-8
+#        vtype: select
+#      - question: locales/locales_to_be_generated
+#        value: fr_FR.UTF-8, en_US.UTF-8
+#        vtype: multiselect
+#  - name:
+#      - apparmor
+#      - apparmor-utils
+#    debconf:
+#      - name: grub-pc
+#        question: grub2/linux_cmdline
+#        value: security=apparmor apparmor=1
+#        vtype: bool
+#  - name:
+#      - screen
+#      - vim
 #
 package__list: []
 

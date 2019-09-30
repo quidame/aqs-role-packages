@@ -5,6 +5,8 @@
 # Tasks to setup packages.
 # Each task should be clearly named, with no inventory variable in the name.
 
+
+# Run debconf BEFORE apt, so packages are preseeded if not yet installed.
 - name: "configure packages"
   debconf:
     name:     "{{ pkg.name }}"
