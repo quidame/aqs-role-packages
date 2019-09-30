@@ -19,22 +19,21 @@ The main action the role is called for. Choices are `setup` (the default) and
 packages__action: unset
 ```
 
-A complex object that lists the packages to install, their debconf answers and
-alternatives to configure.
+A complex object that lists the packages to install and optionally their debconf
+answers.
 ```yaml
 packages__list:
-  - name: vim
-    alternatives:
-      - name: editor
-        path: /usr/bin/vim.basic
-  - name: apparmor
+  - name:
+      - vim
+      - screen
+  - name: locales
     debconf:
-      - name: grub-pc
-        question: grub2/linux_cmdline
-	value: security=apparmor apparmor=1
-	vtype: string
+      - question: locales/default_environment_locale
+        value: fr_FR.UTF-8
+        vtype: select
 ```
-If `debconf.name` is not provided, the package name is used instead.
+If `debconf.name` is not provided, the package name is used instead. This also
+allows one to reconfigure another package, not just the one to install.
 
 Options to pass to the `apt` module when installing or uninstalling packages.
 All are unset by default, meaning that the default value of the matching module
@@ -79,8 +78,7 @@ ansible-galaxy install -r requirements.yml
 
 ## Example Playbook
 
-Configure packages with debconf if wanted, then install all named packages and
-update alternatives if wanted.
+Configure packages with debconf if wanted, then install all named packages.
 ```yaml
 - hosts: clients
   roles:
@@ -88,13 +86,9 @@ update alternatives if wanted.
       packages__update_cache; yes
       packages__state: latest
       packages__list:
-        - name: apparmor
-          debconf:
-            - name: grub-pc
-              question: grub2/linux_cmdline
-              value: "security=apparmor apparmor=1"
-              vtype: string
-        - name: mc
+        - name:
+            - apparmor
+            - apparmor-utils
         - name: keyboard-configuration
           debconf:
             - question: keyboard-configuration/modelcode
@@ -109,11 +103,10 @@ update alternatives if wanted.
             - question: keyboard-configuration/optionscode
               value: "grp:lctrl_lshift_toggle,terminate:ctrl_alt_bksp,grp_led:scroll"
               vtype: string
-        - name: screen
-        - name: vim
-          alternatives:
-            - name: editor
-              path: /usr/bin/vim.basic
+        - name:
+            - screen
+            - vim
+            - mc
 ```
 
 Uninstall packages:
