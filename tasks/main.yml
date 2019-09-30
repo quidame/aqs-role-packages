@@ -2,4 +2,10 @@
 # role: packages
 # file: tasks/main.yml
 
+# Display the data structure of the main variable
+- name: display packages__list
+  debug:
+    var: packages__list
+    verbosity: 2
+
 - import_tasks: "{{ packages__action }}.yml"
