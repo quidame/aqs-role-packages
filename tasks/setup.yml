@@ -5,12 +5,14 @@
 # Tasks to setup packages.
 # Each task should be clearly named, with no inventory variable in the name.
 
-- name: configure packages
+- name: "configure packages"
   debconf:
     name:     "{{ pkg.name }}"
     question: "{{ pkg.question }}"
-    value:    "{{ pkg.value }}"
-    vtype:    "{{ pkg.vtype }}"
+    unseen:   "{{ pkg.unseen | default(omit) }}"
+    value:    "{{ pkg.value  | default(omit) }}"
+    vtype:    "{{ pkg.vtype  | default(omit) }}"
+  register: debconf
   loop: |
     [ {% for p in packages__list if p.debconf is defined %}{% for d in p.debconf %}
       {% if d.name is defined %}{{ d }}{% else %}{{ d | combine({"name": p.name}) }}{% endif %}
@@ -19,10 +21,10 @@
     loop_var: pkg
 
 
-- name: install packages
+- name: "install packages"
   apt:
-    name: "{{ packages__list | json_query('[*].name') }}"
-    state: "{{ 'latest' if packages__state == 'latest' else 'present' }}"
+    name: "{{ pkg }}"
+    state: "{{ 'latest' if packages__state is defined and packages__state == 'latest' else 'present' }}"
     allow_unauthenticated: "{{ packages__allow_unauthenticated | default(omit) }}"
     autoclean:             "{{ packages__autoclean             | default(omit) }}"
     autoremove:            "{{ packages__autoremove            | default(omit) }}"
@@ -36,14 +38,23 @@
     policy_rc_d:           "{{ packages__policy_rc_d           | default(omit) }}"
     update_cache:          "{{ packages__update_cache          | default(omit) }}"
     upgrade:               "{{ packages__upgrade               | default(omit) }}"
-
-
-- name: configure alternatives
-  alternatives:
-    name:     "{{ alt.name }}"
-    path:     "{{ alt.path }}"
-    link:     "{{ alt.link | default(omit) }}"
-    priority: "{{ alt.prio | default(omit) }}"
-  loop: "{{ packages__list | json_query('[*].alternatives') | flatten }}"
+  register: apt
+  loop: "{{ packages__list | json_query('[*].name') }}"
   loop_control:
-    loop_var: alt
+    loop_var: pkg
+
+
+- name: "dpkg-reconfigure packages"
+  command: "dpkg-reconfigure --frontend=noninteractive {{ pkg }}"
+  changed_when: true
+  loop: "{{ reconfigure | unique }}"
+  loop_control:
+    loop_var: pkg
+  vars:
+    debconf_changed: |
+      [ {% for r in debconf.results if r.changed %}
+        "{{ r.invocation.module_args.name }}"{{ '' if loop.last else ',' }}{% endfor %} ]
+    apt_changed: |
+      [ {% for r in apt.results if r.changed %}
+        {{ r.invocation.module_args.package }}{{ '' if loop.last else ',' }}{% endfor %} ]
+    reconfigure: "{{ debconf_changed | difference(apt_changed|flatten) }}"

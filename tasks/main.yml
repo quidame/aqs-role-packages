@@ -2,4 +2,4 @@
 # role: packages
 # file: tasks/main.yml
 
-- include_tasks: "{{ packages__action | default('setup') }}.yml"
+- import_tasks: "{{ packages__action }}.yml"
