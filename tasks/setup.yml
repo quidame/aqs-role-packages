@@ -21,6 +21,10 @@
     loop_var: pkg
 
 
+# Don't install all packages at once, to keep trace of atomic changes and use
+# them to build the list of packages to dpkg-reconfigure right after. Anyway,
+# the name attribute can be a list as well, in this case the list will be
+# installed at once.
 - name: "install packages"
   apt:
     name: "{{ pkg }}"
@@ -44,6 +48,9 @@
     loop_var: pkg
 
 
+# Reconfigure packages for which debconf is changed and apt status is not (as
+# previously installed or updated packages have already applied debconf config
+# in the same time).
 - name: "dpkg-reconfigure packages"
   command: "dpkg-reconfigure --frontend=noninteractive {{ pkg }}"
   changed_when: true

@@ -5,6 +5,8 @@
 # Tasks to unset packages.
 # Each task should be clearly named, with no inventory variable in the name.
 
+
+# Just remove ALL packages listed at once.
 - name: "uninstall packages"
   apt:
     name: "{{ packages__list | json_query('[*].name') | flatten }}"
